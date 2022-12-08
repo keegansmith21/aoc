@@ -2,13 +2,12 @@ using FilePaths
 
 function main(in_file)
     open(in_file, "r") do f
-        directories, total_usage = disk_usage(readlines(f))
+        directories = disk_usage(readlines(f))
         total_under = sum_of_dirs(directories)
         println("Sum of file usage where files <= 100000: ", total_under)
+        total_usage = directories["/"]
         free_space = 7 * 10^7 - total_usage
-        println("Current free space: ", free_space)
         rem_dir_space = 3 * 10^7 - free_space
-        println("Find directory with size of at least ", rem_dir_space)
         size, name = closest_dir_over(directories, rem_dir_space)
         println("Delete the directory:", name, " which will free up ", size, " bytes")
     end
@@ -34,18 +33,15 @@ function disk_usage(lines)
             add_size_to_dirs(cwd, directories, usage)
         end
     end
-    return directories, total_usage
+    return directories
 end
 
 
 function add_size_to_dirs(cwd, dirs, size)
-    wds = split(cwd, "/")
+    wds = splitpath(cwd)
     for i in 1:length(wds)
         d = wds[1:length(wds)-i+1]
-        d = join(d, "/")
-        if d == ""
-            d = "/"
-        end
+        d = joinpath(d)
         dirs[d] += size
     end
 end
