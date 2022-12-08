@@ -21,26 +21,6 @@ function main(in_file)
         end
     end
     println("Highest possible scenic score: ", highest_scenic_score)
-
-    for i in 1:50
-        test_x = i
-        test_y = i
-        row = [parse(Int, i) for i in trees[test_x]]
-        col = [parse(Int, i[test_y]) for i in trees]
-        score = scenic_score(trees, test_x, test_y)
-        if score > 5
-            println(i)
-            println(row[test_y], " ", col[test_x])
-            println(row)
-            println(col)
-            println(score)
-            break
-        end
-    end
-    #left_view = tree_line[1:pos-1]
-    #right_view = tree_line[pos+1:length(tree_line)]
-    #left = view_score(left_view, tree_height)
-    #right = view_score(right_view, tree_height)
 end
 
 
@@ -52,7 +32,6 @@ end
 
 function score_from_vector(tree_line, pos)
     tree_height = tree_line[pos]
-    # from the left
     left_view = reverse(tree_line[1:pos-1])
     right_view = tree_line[pos+1:length(tree_line)]
     left = view_score(left_view, tree_height)
