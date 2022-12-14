@@ -3,10 +3,9 @@ CMD_MAPPING = Dict("U" => [0, 1], "D" => [0, -1], "R" => [1, 0], "L" => [-1, 0])
 
 function main(in_file)
     commands = read_commands(in_file)
-    # tail_positions = parse_commands(commands, 2)
-    # n_tail_positions = length(unique(tail_positions))
-    # println("Unique tail positions for two knot: $(n_tail_positions)")
-
+    tail_positions = parse_commands(commands, 2)
+    n_tail_positions = length(unique(tail_positions))
+    println("Unique tail positions for two knot: $(n_tail_positions)")
     tail_positions = parse_commands(commands, 10)
     n_tail_positions = length(unique(tail_positions))
     println("Unique tail positions for ten knots: $(n_tail_positions)")
@@ -35,9 +34,8 @@ function parse_commands(commands, n_knots)
         knot_positions[1] += CMD_MAPPING[cmd]
         for k in 2:n_knots
             knot_positions[k] += tail_move(knot_positions[k-1], knot_positions[k])
+            push!(tail_tracking, knot_positions[end])
         end
-        append!(tail_tracking, knot_positions[2:n_knots])
-        #println(knot_positions)
     end
     return tail_tracking
 end
@@ -46,12 +44,12 @@ end
 function tail_move(head, tail)
     tail_move = [0, 0]
     diff = [head[1] - tail[1], head[2] - tail[2]]
-    if abs(diff[1]) == 2
+    if abs(diff[1]) >= 2
         tail_move[1] = 1
         if abs(diff[2]) >= 1
             tail_move[2] = 1
         end
-    elseif abs(diff[2]) == 2
+    elseif abs(diff[2]) >= 2
         tail_move[2] = 1
         if abs(diff[1]) >= 1
             tail_move[1] = 1
@@ -65,3 +63,4 @@ end
 
 
 main("input.txt")
+# test_input should give 36 for part 2
