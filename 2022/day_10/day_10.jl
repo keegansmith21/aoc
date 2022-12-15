@@ -9,18 +9,7 @@ function main(in_file)
     signal_strength = [i * x for (i, x) in enumerate(x_cycles)]
     signal_sum = sum([signal_strength[i*40-20] for i in 1:6])
     println("Signal sum: $(signal_sum)")
-
-    # Part 2
-    sprite_locations = [[x - 1, x, x + 1] for x in x_cycles]
-    crt = [i in sprite_locations[i] ? "#" : "." for i in 2:length(x_cycles)]
-    line_indices = [[(i - 1) * 40 + 1, i * 40] for i in 1:6]
-    render = [crt[s:e] for (s, e) in line_indices]
-    for r in render
-        println(join(r, ""))
-    end
-    #println(crt)
-    #println(sprite_locations)
-    println(x_cycles[7:11])
+    render_crt(x_cycles)
 end
 
 
@@ -47,5 +36,16 @@ function parse_x_cycles(cycle_cmds)
 end
 
 
+function render_crt(x_cycles)
+    line_indices = [[(i - 1) * 40 + 1, i * 40] for i in 1:6]
+    sprite_locations = [[x - 1, x, x + 1] for x in x_cycles]
+    sprite_locations = [sprite_locations[s:e] for (s, e) in line_indices]
+    for (i, sprites) in enumerate(sprite_locations)
+        crt = [j - 1 in sprites[j] ? "#" : "." for j in 1:40]
+        println(join(crt, ""))
+    end
+end
+
+
 main("test_input.txt") # should return 13140
-#main("input.txt")
+main("input.txt")
