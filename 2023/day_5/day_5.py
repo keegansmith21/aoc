@@ -17,89 +17,18 @@ def get_location(seed, maps):
     return source
 
 
-def get_location_2(seed, maps):
-    source = seed
-    for map in maps:
-        for map_dest, map_source in map:
-            if source >= map_source[0] and source <= map_source[1]:
-                diff = source - map_source[0]
-                dest = map_dest[0] + diff
-                source = dest
-                break
-    return source
+def n_in_range(n, r):
+    if n >= r[0] and n <= r[1]:
+        return n - r[0]
+    return False
 
 
-def find_overlapping_range(range1, range2):
-    n1, n2 = range1
-    m1, m2 = range2
-
-    if n2 < m1 or m2 < n1:
-        return None  # No overlap
-
-    overlap_start = max(n1, m1)
-    overlap_end = min(n2, m2)
-
-    return (overlap_start, overlap_end)
-
-
-def nth_lowest_in_map(map, n):
-    dests = [m[0][0] for m in map]
-    lowest = [i for _, i in sorted(zip(dests, map))]
-    return lowest[n]
-
-
-def find_from_source(map, start_dest, start_source):
-    for map_dest, map_source in map:
-        if find_overlapping_range((start_dest, start_source), (map_dest, map_source)):
-            return map_dest, map_source
-    return start_dest, start_source
-
-
-def get_lowest_location(seed_ranges, maps):
-    rank = 0
-    path = []
-
-    maps = list(maps.values())
-    start_dest, start_source = nth_lowest_in_map(maps[-1], rank)
-    path.append((start_dest, start_source))
-
-    for map in reversed(maps[:-1]):
-        start_dest, start_source = find_from_source(map, start_dest, start_source)
-        path.append((start_dest, start_source))
-
-    path = list(reversed(path))
-    # See which seed range this is
-    seed_range = None
-    for sr in seed_ranges:
-        if find_overlapping_range(path[0][1], sr):
-            seed_range = sr
-
-    min_loc = 1e10
-    count = 0
-    this_seed = seed_range[0]
-    while this_seed <= seed_range[1]:
-        print(count)
-        loc = get_location_2(this_seed, maps)
-        if loc < min_loc:
-            min_loc = loc
-        this_seed += 1
-        count += 1
-
-    return min_loc
-
-
-def get_lowest_location_2(seed_range, maps):
-    maps = list(maps.values())
-
-    source_range = seed_range
-    for map in maps:
-        for map_dest, map_source in map:
-            overlap = find_overlapping_range(map_source, source_range)
-            if overlap:
-                overlap_size = overlap[1] - overlap[0]
-                source_range = (map_dest[0] + overlap_size, map_dest[1])
-
-    return source_range[0]
+def lookup_dest_to_source(map, dest):
+    for map_dest_r, map_source_r in map:
+        offset = n_in_range(dest, map_dest_r)
+        if offset is not False:
+            return map_source_r[0] + offset
+    return dest
 
 
 def make_maps(input, pt2=False):
@@ -136,15 +65,29 @@ def main_2(input):
     for i in list(range(len(seeds)))[::2]:
         seed_ranges.append((int(seeds[i]), int(seeds[i]) + int(seeds[i + 1])))
     maps = make_maps(input[2:], pt2=True)
-    locations = []
-    for seed_range in seed_ranges:
-        locations.append(get_lowest_location_2(seed_range, maps))
-    answer = min(locations)
-    print(f"PT 2 ANSWER: {answer}")
+
+    start_dest = 0
+    seed_found = False
+    while not seed_found:
+        if start_dest % 1000 == 0:
+            print(start_dest)
+
+        # Traverse through the maps
+        d = start_dest
+        for map in list(maps.values())[::-1]:
+            d = lookup_dest_to_source(map, d)
+
+        # Check if the seed value returned exists in the seed ranges
+        for seed_range in seed_ranges:
+            if n_in_range(d, seed_range):
+                seed_found = True
+                break
+        start_dest += 1
+
+    print(f"PT 2 ANSWER: {start_dest-1}")
 
 
 if __name__ == "__main__":
-    #    with open("2023/day_5/test_input.txt", "r") as f:
     with open("2023/day_5/input.txt", "r") as f:
         input = f.readlines()
     # main_1(input)
