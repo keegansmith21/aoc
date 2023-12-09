@@ -1,4 +1,4 @@
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from math import lcm
 
 
 def most_common_item(lst):
@@ -41,65 +41,33 @@ def main_1(input):
     print(f"PT 1 ANSWER: {steps}")
 
 
-def get_zs(node, nodes, instructions, step_s, step_e):
-    zs = []
-    for i in range(step_s, step_e):
-        instruction = instructions[i % len(instructions)]
+def find_cycle_length(node, nodes, instructions):
+    step = 0
+    z_instructions = []
+    z_instruction_steps = []
+    while True:
+        instruction = instructions[step % len(instructions)]
         node = nodes[node][instruction]
         if node[-1] == "Z":
-            zs.append(i)
-
-    return zs, node
-
-
-def main_2_2(input):
-    nodes, instructions = fmt(input)
-    step_nodes = [n for n in list(nodes.keys()) if n[-1] == "A"]
-
-    i = int(1e7)
-    j = 0
-    c = 0
-    while True:
-        with ProcessPoolExecutor(max_workers=len(step_nodes)) as executor:
-            futures = []
-            for n in step_nodes:
-                futures.append(executor.submit(get_zs, n, nodes, instructions, j, j + i))
-
-            all_zs = []
-            step_nodes = []
-            for future in as_completed(futures):
-                zs, node = future.result()
-                all_zs.extend(zs)
-                step_nodes.append(node)
-
-            item, count = most_common_item(all_zs)
-            print(count, item)
-            if count == len(step_nodes):
+            instruction_n = step % len(instructions)
+            if instruction_n in z_instructions:
                 break
-            j += i
-
-    print(f"PT 2 ANSWER: {item}")
+            z_instructions.append(instruction_n)
+            z_instruction_steps.append(step)
+        step += 1
+    return step - z_instruction_steps[-1]
 
 
 def main_2(input):
     nodes, instructions = fmt(input)
 
     step_nodes = [n for n in list(nodes.keys()) if n[-1] == "A"]
-    n_nodes = len(step_nodes)
-    steps = 0
-    while True:
-        ends_in = [n[-1] for n in step_nodes]
-        n_zs = ends_in.count("Z")
-        if n_zs > 2:
-            print("".join(ends_in), n_zs)
-        if n_zs == n_nodes:
-            break
+    cycle_steps = []
+    for node in step_nodes:
+        cycle_steps.append(find_cycle_length(node, nodes, instructions))
+    answer = lcm(*cycle_steps)
 
-        instruction = instructions[steps % len(instructions)]
-        steps += 1
-        step_nodes = [nodes[n][instruction] for n in step_nodes]
-
-    print(f"PT 2 ANSWER: {steps}")
+    print(f"PT 2 ANSWER: {answer}")
     pass
 
 
@@ -107,4 +75,4 @@ if __name__ == "__main__":
     with open("2023/day_8/input.txt", "r") as f:
         input = f.readlines()
     # main_1(input)
-    main_2_2(input)
+    main_2(input)
