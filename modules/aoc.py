@@ -29,3 +29,15 @@ def n_in_range(
                 return False
 
     return n - low
+
+
+def most_common_item(lst):
+    count_dict = {}
+
+    for item in lst:
+        count_dict[item] = count_dict.get(item, 0) + 1
+
+    common_item = max(count_dict, key=count_dict.get)
+    count = count_dict[common_item]
+
+    return common_item, count
