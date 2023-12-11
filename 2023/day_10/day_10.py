@@ -89,6 +89,32 @@ def traverse(grid, s_i):
     return loops
 
 
+def is_inside(element, grid, loop):
+    north_elements = ["|", "J", "L"]
+    row = element[0]
+    check_range = (0, element[1])
+    count = 0
+    for i in range(*check_range):
+        if (row, i) in loop:
+            if grid[row][i] in north_elements:
+                count += 1
+    if bool(count % 2):
+        return True
+    else:
+        return False
+
+
+def get_elements_inside_loop(grid, loop):
+    count = 0
+    for y, row in enumerate(grid):
+        for x, _ in enumerate(row):
+            if (y, x) in loop:
+                continue
+            if is_inside((y, x), grid, loop):
+                count += 1
+    return count
+
+
 def main_1(input):
     grid, s_i = fmt(input)
     loops = traverse(grid, s_i)
@@ -96,19 +122,37 @@ def main_1(input):
 
     answer = max(loop_len) // 2
     print(f"PT 1 ANSWER: {answer}")
-    pass
 
 
 def main_2(input):
-    fmt(input)
+    grid, s_i = fmt(input)
+    loops = traverse(grid, s_i)
+    loop = max(loops, key=len)
 
-    answer = None
-    print(f"PT 2 ANSWER: {answer}")
-    pass
+    # Pretty picture
+    grid_max_y = len(grid)
+    grid_max_x = len(grid[0])
+    loop_map = []
+    for j in range(0, grid_max_y):
+        row_map = []
+        for i in range(0, grid_max_x):
+            if (j, i) in loop:
+                row_map.append(grid[j][i])
+            else:
+                row_map.append(".")
+        loop_map.append(row_map)
+
+    with open("2023/day_10/loop_map.txt", "w") as f:
+        for i in loop_map:
+            f.write("".join(i) + "\n")
+
+    n_inside = get_elements_inside_loop(grid, loop)
+
+    print(f"PT 2 ANSWER: {n_inside}")
 
 
 if __name__ == "__main__":
     with open("2023/day_10/input.txt", "r") as f:
         input = f.readlines()
     main_1(input)
-    # main_2(input)
+    main_2(input)
