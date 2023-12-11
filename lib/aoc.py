@@ -24,14 +24,15 @@ def n_in_range(
     if inclusive[1]:
         if n >= high:
             return False
-        else:
-            if n > high:
-                return False
+    else:
+        if n > high:
+            return False
 
     return n - low
 
 
 def most_common_item(lst):
+    # Finds the most common item in a list and how many there are
     count_dict = {}
 
     for item in lst:
@@ -41,3 +42,8 @@ def most_common_item(lst):
     count = count_dict[common_item]
 
     return common_item, count
+
+
+def transpose_list_of_lists(lst):
+    # Transposes a list like it's a matrix
+    return list(map(list, zip(*lst)))
