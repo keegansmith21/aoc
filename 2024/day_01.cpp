@@ -40,7 +40,7 @@ int similarity(std::vector<int> c1, std::vector<int> c2) {
 }
 
 int main() {
-  auto [c1, c2] = read_input("input.txt");
+  auto [c1, c2] = read_input("day_01_input.txt");
   std::sort(c1.begin(), c1.end());
   std::sort(c2.begin(), c2.end());
   auto sum = difference(c1, c2);

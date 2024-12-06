@@ -81,7 +81,7 @@ int is_safe_damp(std::string line) {
 
 int count_safe() {
   int safe{0};
-  std::ifstream infile("input.txt");
+  std::ifstream infile("day_02_input.txt");
   std::string line;
 
   while (std::getline(infile, line)) {
@@ -93,7 +93,7 @@ int count_safe() {
 
 int count_safe_damp() {
   int safe{0};
-  std::ifstream infile("input.txt");
+  std::ifstream infile("day_02_input.txt");
   std::string line;
 
   while (std::getline(infile, line)) {

@@ -5,7 +5,7 @@
 
 std::vector<std::vector<char>> read_in() {
   std::vector<std::vector<char>> wordsearch;
-  std::ifstream input("input.txt");
+  std::ifstream input("day_04_input.txt");
   std::string line;
 
   while (std::getline(input, line)) {

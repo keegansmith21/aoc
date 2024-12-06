@@ -44,7 +44,7 @@ std::string purge_dont(std::string &line) {
 }
 
 int add_muls() {
-  std::ifstream input("input.txt");
+  std::ifstream input("day_03_input.txt");
   std::string line;
   int counter(0);
   while (std::getline(input, line)) {
@@ -54,7 +54,7 @@ int add_muls() {
 }
 
 int add_domuls() {
-  std::ifstream input("input.txt");
+  std::ifstream input("day_03_input.txt");
   std::string line;
   std::string input_str("do()");
   int counter(0);
